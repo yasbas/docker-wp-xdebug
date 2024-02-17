@@ -15,9 +15,9 @@ services:
     environment:
       #VIRTUAL_HOST: mydomain.com, www.mydomain.com
       WORDPRESS_DB_HOST: db
-      WORDPRESS_DB_NAME: mydbname
-      WORDPRESS_DB_USER: mydbuser
-      WORDPRESS_DB_PASSWORD: mydbpassword
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
       # Set the XDEBUG_CONFIG as described here: https://xdebug.org/docs/remote
       XDEBUG_CONFIG: client_host=192.168.1.151
 
@@ -39,22 +39,42 @@ services:
     restart: always
 
     environment:
-      MYSQL_ROOT_PASSWORD: mydbrootpassword
+      MYSQL_ROOT_PASSWORD: somewordpress
       #MYSQL_RANDOM_ROOT_PASSWORD: '1' # You can use this instead of the option right above if you do not want to be able login to MySQL under root
-      MYSQL_DATABASE: mydbname
-      MYSQL_USER: mydbuser
-      MYSQL_PASSWORD: mydbpassword
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
 
     ports:
       -  "3306:3306" # I prefer to keep the ports available for external connections in the Development environment to be able to work with the database
       # from programs like e.g. HeidiSQL on Windows or DBeaver on Mac.
 
     volumes:
-      - /opt/projects/wpd/mysql:/var/lib/mysql
+      - db_data1:/var/lib/mysql
 
     networks:
       - backend-wpd
 
+
+  phpmyadmin:
+    container_name: phpmyadmin-wpd
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - "8088:80" # Map port 8080 on the host to port 80 in the container
+    environment:
+      PMA_HOST: db # Use the service name of your MySQL service
+      PMA_USER: wordpress # MySQL user
+      PMA_PASSWORD: wordpress # MySQL password
+      MYSQL_ROOT_PASSWORD: somewordpress # Root password, if needed
+    depends_on:
+      - db
+    networks:
+      - backend-wpd # Connect to the same network as MySQL for direct access
+
+
+volumes:
+  db_data1: {}
 
 networks:
   frontend-wpd:
