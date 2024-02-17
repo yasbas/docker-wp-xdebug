@@ -1,0 +1,1 @@
+Docker compose setup from here: https://www.wpdiaries.com/wordpress-with-xdebug-for-docker/
