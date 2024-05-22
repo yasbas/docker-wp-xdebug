@@ -26,3 +26,6 @@ COPY files-to-copy/ /
 # the helper script docker-php-ext-enable (defined for image `php`)
 # works here, and we can use it to enable xdebug:
 RUN docker-php-ext-enable xdebug
+
+# Set the correct permissions for the WordPress directory
+RUN chown -R www-data:www-data /var/www/html
